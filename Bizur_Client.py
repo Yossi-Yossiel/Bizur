@@ -7,7 +7,7 @@ import hashlib
 
 def brutehack(min,max, hash):
     for i in range(min,max):
-        h = hashlib.md5(str(i))
+        h = hashlib.md5(str(i).encode()).hexdigest()
         if h == hash:
             return True
 
@@ -16,7 +16,7 @@ def brutehack(min,max, hash):
 
 def main():
     coresnum = multiprocessing.cpu_count()
-    port = input("port:")
+    port = int(input("port:"))
     ip = input("ip:")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((ip, port))
@@ -48,5 +48,9 @@ def main():
     mmlist = []
     mmlist.append(min)
     for i in range(coresnum*20):
-        n = max // coresnum*20 + (max//coresnum)*i
+        n = max // coresnum*20 + (max//coresnum*20)*i
         mmlist.append(n)
+    while True:
+
+
+main()
