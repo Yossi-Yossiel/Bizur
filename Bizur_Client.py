@@ -50,7 +50,7 @@ def main():
         mmlist.append(n)
 
     tlist = []
-    for i in range(mmlist-1):
+    for i in range(len(mmlist)-1):
         t = threading.Thread(target=brutehack, args=(mmlist[i],mmlist[i+1],hashcode,sock))
         t.start()
         tlist.append(t)
