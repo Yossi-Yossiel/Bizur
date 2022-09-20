@@ -21,8 +21,10 @@ def main():
     char = int(sock.recv(1024))
     data = sock.recv(char).decode()  # should receive 3 params: min, max and hash code
     sock.send("ok".encode())
-    d1 = sock.recv(1024).decode()
+    char = int(sock.recv(1024))
+    d1 = sock.recv(char).decode()
     if d1 == data:
+        sock.send("good")
         data = data.split()
         min = data[0]
         max = data[1]
@@ -31,10 +33,12 @@ def main():
         sock.send("send again".encode())
         d2 = sock.recv(char)
         if d2 == d1:
+            sock.send("good".encode())
             min = d1[0]
             max = d1[1]
             hashcode = d1[2]
         elif d2 == data:
+            sock.send("good")
             min = data[0]
             max = data[1]
             hashcode = data[2]
@@ -43,6 +47,7 @@ def main():
             min = 0
             max = 0
             hashcode = "Error"
+            sock.close()
     mmlist = []
     mmlist.append(min)
     for i in range(coresnum):
@@ -57,5 +62,6 @@ def main():
     for i in tlist:
         i.join()
     sock.close()
+
 
 main()
