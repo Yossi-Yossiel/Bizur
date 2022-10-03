@@ -7,14 +7,10 @@ coresnum = multiprocessing.cpu_count()
 port = 8200
 ip = input("ip:")
 event = threading.Event()
-print(event.is_set())
 
 
 def brutehack(min, max, hash, sock: socket.socket ):
-    print(str(min) + " " + str(max))
-    print(hash)
     i = min
-    print(event.is_set())
     while not event.is_set() and i < max:
         h = hashlib.md5(str(i).encode()).hexdigest()
         if h == hash:
@@ -31,7 +27,6 @@ def main():
     char = int(sock.recv(1024).decode())
     sock.send(("got the char length " + str(char)).encode())
     data = sock.recv(char).decode()  # should receive 3 params: min, max and hash code
-    print(data)
     sock.send("ok".encode())
     d1 = sock.recv(char).decode()
     if d1 == data:
@@ -60,13 +55,11 @@ def main():
             hashcode = "Error"
             sock.close()
     mmlist = []
-    print(min)
     mmlist.append(min)
     for i in range(coresnum):
 
         min = min + ((max-min)//coresnum)
         mmlist.append(min)
-    print(mmlist)
     tlist = []
     for i in range(len(mmlist)-1):
         t = threading.Thread(target=brutehack, args=(mmlist[i],mmlist[i+1],hashcode, sock))
@@ -76,7 +69,6 @@ def main():
         i.join()
     while not event.is_set():
         sock.send("nope".encode())
-        print(threading.active_count())
         if threading.active_count() == 1:
             sock.close()
             main()
