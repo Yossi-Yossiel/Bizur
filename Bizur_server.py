@@ -1,13 +1,21 @@
 import socket
 import hashlib
+import sys
 import threading
-
+event = threading.Event()
 
 def ThreadListen(client: socket.socket):
-    flag = client.recv(1024).decode().split()
-    if flag[0] == "found":
+    flag = client.recv(1024).decode()
+    flaglist = flag.split()
+    if flaglist[0] == "found":
         print(flag)
+        event.set()
+        sock.close()
+        sys.exit()
         return
+    else:
+        return
+
 
 
 def distribute(client: socket.socket, count: int, hashcode: str):
@@ -33,14 +41,16 @@ def distribute(client: socket.socket, count: int, hashcode: str):
                 return False,count
 
 
-hashcode = hashlib.md5("1000000010".encode()).hexdigest() #"EC9C0F7EDCC18A98B1F31853B1813301".lower()
+hashcode = hashlib.md5("1010000011".encode()).hexdigest() #"EC9C0F7EDCC18A98B1F31853B1813301".lower()
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind(('0.0.0.0', 8200))
 clients = []
 count = 1000000000
 i = 0
 tlist = []
-while True:
+while not event.is_set():
+    if event.is_set():
+        break
     sock.listen()
     clients.append(sock.accept())
     x = clients[i]
@@ -56,3 +66,7 @@ while True:
 
     print(workFlag)
     i += 1
+    count += 10000000
+for c in clients:
+    c[0].close()
+sock.close()
